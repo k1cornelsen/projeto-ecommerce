@@ -1,0 +1,30 @@
+<html>
+
+    <head>
+
+        <meta charset="UTF-8">
+        <link rel="stylesheet" href="../css/login.css">
+        <script src="../js/register.js" defer></script>
+
+    </head>
+
+    <body>
+        
+        <div class="form">
+            <img src="../assets/logo.png" width="100%">
+            <h1 class="header">Registro</h1>
+            <form id="formCadastro">
+                <input type="text" class="input" name="nome" id="nome" placeholder="nome" required>
+                <input type="text" class="input" name="cpf" id="cpf" placeholder="cpf" required>
+                <input type="text" class="input" name="email" id="email" placeholder="email" required>
+                <input type="password" class="input" name="password" id="password" placeholder="senha" required>
+                <input type="password" class="input"  name="password" id="passwordconfirm" placeholder="confimar senha" required>
+                <button onclick="gravar()" type="button" class="submit">Registrar</button>
+            </form>
+            <a href="../pages/login.html" class="link">Já é cadastrado? Faça seu Login aqui.</a>
+        </div>
+
+
+    </body>
+
+</html>
