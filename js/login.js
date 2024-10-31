@@ -1,25 +1,26 @@
-function login(){
-
+function login() {
     var email = document.getElementById("email").value;
     var password = document.getElementById("password").value;
-    form = new Array(email, password);
+
+    // Criptografar a senha com SHA256 usando CryptoJS
+    var hashedPassword = CryptoJS.SHA256(password).toString();
+
+    var dados = new FormData();
+    dados.set('email', email);
+    dados.set('password', hashedPassword);
 
     fetch("../php/login.php", {
-    method: "GET"
-    }).then(async function(resposta){
+        method: "POST",
+        body: dados
+    }).then(async function(response) {
+        var dados = await response.json();
 
-        var dados = await resposta.json();
-
-        for(i = 0; i < dados.length; i++){
-
-            if(email == dados[i].email && password == dados[i].senha){
-                window.location.href = "../index/index.html"
-            }
-
+        if (dados.success) {
+            window.location.href = "../index/index.html";
+        } else {
+            alert("Erro ao fazer login: " + dados.message);
         }
-        
+    }).catch(error => {
+        alert("Erro ao processar o login: " + error);
     });
-
-
-
 }

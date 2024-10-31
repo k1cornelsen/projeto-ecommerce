@@ -1,22 +1,25 @@
 <?php
+include "conexao.php";
 
-    include "conexao.php";
+if (isset($_POST['email']) && isset($_POST['password'])) {
+    $email = mysqli_real_escape_string($con, $_POST['email']);
+    $password = mysqli_real_escape_string($con, $_POST['password']);
 
-    $sql = "SELECT email, senha FROM projetosemestral.usuario";
+    $sql = "SELECT email, senha FROM usuario WHERE email = ? AND senha = ?";
+    $stmt = mysqli_prepare($con, $sql);
+    mysqli_stmt_bind_param($stmt, 'ss', $email, $password);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
 
-    $resultado = mysqli_query($con, $sql);
-
-    $i = 0;
-
-    while($registro = mysqli_fetch_assoc($resultado)){
-
-        $dados[$i] ["email"] = $registro["email"];
-        $dados[$i] ["senha"] = $registro["senha"];
-        $i++;
-
+    if (mysqli_num_rows($result) > 0) {
+        echo json_encode(['success' => true]);
+    } else {
+        echo json_encode(['success' => false, 'message' => 'Credenciais inválidas.']);
     }
 
-    $objetoJSON = json_encode($dados);
-    echo $objetoJSON;
-
+    mysqli_stmt_close($stmt);
+    mysqli_close($con);
+} else {
+    echo json_encode(['success' => false, 'message' => 'Dados incompletos.']);
+}
 ?>
