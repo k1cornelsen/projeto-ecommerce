@@ -75,14 +75,12 @@ pipeline {
             steps {
                 withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')]) {
                     sh """
-                        microk8s kubectl apply -f ${K8S_DIR}/create-base-configmap.yaml
-                        microk8s kubectl apply -f ${K8S_DIR}/database-pv.yaml
-                        microk8s kubectl apply -f ${K8S_DIR}/database-service.yaml
-                        microk8s kubectl apply -f ${K8S_DIR}/database-statefulset.yaml
-                        microk8s kubectl apply -f ${K8S_DIR}/backend-deployment.yaml
-                        microk8s kubectl apply -f ${K8S_DIR}/backend-service.yaml
-                        microk8s kubectl apply -f ${K8S_DIR}/frontend-deployment.yaml
-                        microk8s kubectl apply -f ${K8S_DIR}/frontend-service.yaml
+                        microk8s kubectl apply -f ${K8S_DIR}/banco-pv.yaml
+                        microk8s kubectl apply -f ${K8S_DIR}/create-db.yaml
+                        microk8s kubectl apply -f ${K8S_DIR}/deploy-banco.yaml
+                        microk8s kubectl apply -f ${K8S_DIR}/deploy-svc-banco.yanl
+                        microk8s kubectl apply -f ${K8S_DIR}/deploy.yaml
+                        microk8s kubectl apply -f ${K8S_DIR}/deploy-svc.yaml
                     """
                 }
             }
