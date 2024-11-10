@@ -18,21 +18,6 @@ pipeline {
             }
         }
 
-        stage('Docker Hub Login Test') {
-            steps {
-                script {
-                    // Desativa a ocultação de saída temporariamente
-                    sh 'set +x'
-                    // Imprime a senha completa para verificação
-                    echo "Senha Docker Hub: ${DOCKER_HUB_PSW}"
-                    // Tenta fazer login e verifica sucesso/falha
-                    sh "echo \$DOCKER_HUB_PSW | docker login -u \$DOCKER_HUB_USR --password-stdin || exit 1"
-                    // Reativa a ocultação de saída
-                    sh 'set -x'
-                }
-            }
-        }
-
         stage('Snyk Docker Image Scan - App') {
             steps {
                 sh """
@@ -58,7 +43,7 @@ pipeline {
 
         stage('Push Docker Image - Database') {
             steps {
-                withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials', usernameVariable: 'DOCKER_HUB_USR', passwordVariable: 'DOCKER_HUB_PSW')]) {
+                withCredentials([usernamePassword(credentialsId: 'DOCKER_HUB', usernameVariable: 'DOCKER_HUB_USR', passwordVariable: 'DOCKER_HUB_PSW')]) {
                     sh """
                         echo \$DOCKER_HUB_PSW | docker login -u \$DOCKER_HUB_USR --password-stdin
                         docker push ${DOCKER_IMAGE_DB}
@@ -75,7 +60,7 @@ pipeline {
 
         stage('Push Docker Image - App') {
             steps {
-                withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials', usernameVariable: 'DOCKER_HUB_USR', passwordVariable: 'DOCKER_HUB_PSW')]) {
+                withCredentials([usernamePassword(credentialsId: 'DOCKER_HUB', usernameVariable: 'DOCKER_HUB_USR', passwordVariable: 'DOCKER_HUB_PSW')]) {
                     sh """
                         echo \$DOCKER_HUB_PSW | docker login -u \$DOCKER_HUB_USR --password-stdin
                         docker push ${DOCKER_IMAGE_APP}
