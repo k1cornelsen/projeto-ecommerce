@@ -18,76 +18,70 @@ pipeline {
             }
         }
 
-        stage('Docker Hub Login') {
+        stage('Docker Hub Login Test') {
             steps {
-                script {
-                    sh "echo $DOCKER_HUB_PSW | docker login -u $DOCKER_HUB_USR --password-stdin"
-                }
+                // Imprime a senha completa para verificação em ambiente de desenvolvimento
+                echo "Senha Docker Hub: ${DOCKER_HUB_PSW}"
+
+                // Tenta fazer login e verifica sucesso/falha
+                sh "echo \$DOCKER_HUB_PSW | docker login -u \$DOCKER_HUB_USR --password-stdin || exit 1"
             }
         }
 
         stage('Snyk Docker Image Scan - App') {
             steps {
-                script {
-                    sh """
-                        snyk auth --auth-type=token $SNYK_TOKEN
-                        snyk container test ${DOCKER_IMAGE_APP} --severity-threshold=medium
-                    """
-                }
+                sh """
+                    snyk auth --auth-type=token $SNYK_TOKEN
+                    snyk container test ${DOCKER_IMAGE_APP} --severity-threshold=medium
+                """
             }
         }
 
         stage('Snyk Docker Image Scan - Database') {
             steps {
-                script {
-                    sh "snyk container test ${DOCKER_IMAGE_DB} --severity-threshold=medium"
-                }
+                sh "snyk container test ${DOCKER_IMAGE_DB} --severity-threshold=medium"
             }
         }
 
         stage('Build Docker Image - Database') {
             steps {
                 dir(SQL_DIR) {
-                    script {
-                        docker.build(DOCKER_IMAGE_DB, '--no-cache .')
-                    }
+                    sh "docker build --no-cache -t ${DOCKER_IMAGE_DB} ."
                 }
             }
         }
 
         stage('Push Docker Image - Database') {
             steps {
-                script {
-                    docker.withRegistry('https://registry.hub.docker.com', 'docker-hub-credentials') {
-                        docker.image(DOCKER_IMAGE_DB).push()
-                    }
+                withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials', usernameVariable: 'DOCKER_HUB_USR', passwordVariable: 'DOCKER_HUB_PSW')]) {
+                    sh """
+                        echo \$DOCKER_HUB_PSW | docker login -u \$DOCKER_HUB_USR --password-stdin
+                        docker push ${DOCKER_IMAGE_DB}
+                    """
                 }
             }
         }
 
         stage('Build Docker Image - App') {
             steps {
-                script {
-                    docker.build(DOCKER_IMAGE_APP, '--no-cache -t ${DOCKER_IMAGE_APP} -f Dockerfile .')
-                }
+                sh "docker build --no-cache -t ${DOCKER_IMAGE_APP} -f Dockerfile ."
             }
         }
 
         stage('Push Docker Image - App') {
             steps {
-                script {
-                    docker.withRegistry('https://registry.hub.docker.com', 'docker-hub-credentials') {
-                        docker.image(DOCKER_IMAGE_APP).push()
-                    }
+                withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials', usernameVariable: 'DOCKER_HUB_USR', passwordVariable: 'DOCKER_HUB_PSW')]) {
+                    sh """
+                        echo \$DOCKER_HUB_PSW | docker login -u \$DOCKER_HUB_USR --password-stdin
+                        docker push ${DOCKER_IMAGE_APP}
+                    """
                 }
             }
         }
 
         stage('Snyk Security Scan - Project Directory') {
             steps {
-                script {
-                    sh 'snyk code test . --severity-threshold=medium'
-                }
+                sh 'snyk code test . --severity-threshold=medium'
             }
         }
 
