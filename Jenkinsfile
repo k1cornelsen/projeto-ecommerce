@@ -20,11 +20,16 @@ pipeline {
 
         stage('Docker Hub Login Test') {
             steps {
-                // Imprime a senha completa para verificação em ambiente de desenvolvimento
-                echo 'Senha Docker Hub: ${DOCKER_HUB_PSW}'
-
-                // Tenta fazer login e verifica sucesso/falha
-                sh "echo \$DOCKER_HUB_PSW | docker login -u \$DOCKER_HUB_USR --password-stdin || exit 1"
+                script {
+                    // Desativa a ocultação de saída temporariamente
+                    sh 'set +x'
+                    // Imprime a senha completa para verificação
+                    echo "Senha Docker Hub: ${DOCKER_HUB_PSW}"
+                    // Tenta fazer login e verifica sucesso/falha
+                    sh "echo \$DOCKER_HUB_PSW | docker login -u \$DOCKER_HUB_USR --password-stdin || exit 1"
+                    // Reativa a ocultação de saída
+                    sh 'set -x'
+                }
             }
         }
 
