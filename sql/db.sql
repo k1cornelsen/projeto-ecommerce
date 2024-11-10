@@ -1,32 +1,39 @@
-create database if not exists projetosemestral;
-use projetosemestral;
+CREATE DATABASE IF NOT EXISTS projetosemestral;
+USE projetosemestral;
 
-create table if not exists usuario(
-email varchar(200),
-nome varchar(200),
-cpf bigint,
-senha varchar(200),
-primary key (email));
+CREATE TABLE IF NOT EXISTS usuario (
+    email VARCHAR(200) NOT NULL,
+    nome VARCHAR(200),
+    cpf BIGINT,
+    senha VARCHAR(200),
+    PRIMARY KEY (email)
+);
 
-create table if not exists produto(
-nome varchar(200),
-descricao varchar(1000), 
-valor int,
-primary key (nome));
+CREATE TABLE IF NOT EXISTS produto (
+    nome VARCHAR(200) NOT NULL,
+    descricao VARCHAR(1000),
+    valor INT,
+    PRIMARY KEY (nome)
+);
 
-create table if not exists carrinho(
-nome varchar(200),
-descricao varchar(1000),
-valor int,
-primary key (nome));
+CREATE TABLE IF NOT EXISTS carrinho (
+    nome VARCHAR(200) NOT NULL,
+    descricao VARCHAR(1000),
+    valor INT,
+    PRIMARY KEY (nome)
+);
 
-insert into produto 
-values ('Bermuda Cyclone', 'BERMUDA AZUL PRA COMBINAR COM O KENNER', 379),
-('Boné Kondzilla', 'BONÉ DE SUCESSO', 100),
-('Camisa do Messi', '9 EM 10 NO BAILE TÃO USANDO, SÓ FALTA VOCÊ', 240),
-('Chinelo Kenner', 'DE KENNER', 150),
-('Corrente de Ouro', 'CORRENTE DE OURO 24K 70CM', 2990),
-('Óculos Juliet', 'UM ITEM DE CRIA QUE NÃO PODE FALTAR', 125);
+INSERT INTO produto (nome, descricao, valor)
+VALUES 
+    ('Bermuda Cyclone', 'BERMUDA AZUL PRA COMBINAR COM O KENNER', 379),
+    ('Boné Kondzilla', 'BONÉ DE SUCESSO', 100),
+    ('Camisa do Messi', '9 EM 10 NO BAILE TÃO USANDO, SÓ FALTA VOCÊ', 240),
+    ('Chinelo Kenner', 'DE KENNER', 150),
+    ('Corrente de Ouro', 'CORRENTE DE OURO 24K 70CM', 2990),
+    ('Óculos Juliet', 'UM ITEM DE CRIA QUE NÃO PODE FALTAR', 125);
 
-GRANT ALL PRIVILEGES ON projetosemestral.* TO 'toor'@'%' IDENTIFIED BY 'senhasecure1234#';
+-- Cria o usuário e concede privilégios
+CREATE USER IF NOT EXISTS 'toor'@'%' IDENTIFIED BY 'senhasecure1234#';
+GRANT ALL PRIVILEGES ON projetosemestral.* TO 'toor'@'%';
 FLUSH PRIVILEGES;
+
