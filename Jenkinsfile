@@ -2,7 +2,11 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_IMAGE = 'k1cornelsenp/projeto-ecommerce:latest'
+        DOCKER_REPO = 'k1cornelsenp/projeto-ecommerce'
+        DOCKER_IMAGE_APP = "${DOCKER_REPO}:latest"
+        DOCKER_IMAGE_DB = "${DOCKER_REPO}-db:latest"
+        K8S_DIR = 'k8s/'
+        SQL_DIR = 'sql/'
     }
 
     stages {
@@ -12,19 +16,47 @@ pipeline {
             }
         }
 
-        stage('Build Docker Image') {
+        stage('Snyk Docker Image Scan - App') {
             steps {
                 script {
-                    docker.build(DOCKER_IMAGE)
+                    sh "snyk container test ${DOCKER_IMAGE_APP} --severity-threshold=medium"
                 }
             }
         }
 
-        stage('Push Docker Image') {
+        stage('Snyk Docker Image Scan - Database') {
+            steps {
+                script {
+                    sh "snyk container test ${DOCKER_IMAGE_DB} --severity-threshold=medium"
+                }
+            }
+        }
+
+        stage('Build Docker Image - Database') {
+            steps {
+                dir(SQL_DIR) {
+                    script {
+                        docker.withRegistry('https://registry.hub.docker.com', 'docker-hub-credentials') {
+                            docker.build(DOCKER_IMAGE_DB, '--no-cache .').push()
+                        }
+                    }
+                }
+            }
+        }
+
+        stage('Build Docker Image - App') {
+            steps {
+                script {
+                    docker.build(DOCKER_IMAGE_APP, '--no-cache -t ${DOCKER_IMAGE_APP} -f Dockerfile .')
+                }
+            }
+        }
+
+        stage('Push Docker Image - App') {
             steps {
                 script {
                     docker.withRegistry('https://registry.hub.docker.com', 'docker-hub-credentials') {
-                        docker.image(DOCKER_IMAGE).push()
+                        docker.image(DOCKER_IMAGE_APP).push()
                     }
                 }
             }
@@ -32,24 +64,12 @@ pipeline {
 
         stage('Deploy to Kubernetes') {
             steps {
-                sh 'kubectl apply -f k8s/'
-            }
-        }
-
-        stage('Snyk Security Scan - Full Project') {
-            steps {
-                script {
-                    // Executa a análise Snyk em todo o diretório do projeto
-                    sh 'snyk test --all-projects --severity-threshold=medium'
-                }
-            }
-        }
-
-        stage('Snyk Docker Image Scan') {
-            steps {
-                script {
-                    // Executa a análise Snyk na imagem Docker
-                    sh "snyk container test ${DOCKER_IMAGE} --severity-threshold=medium"
+                dir(K8S_DIR) {
+                    sh "microk8s kubectl apply -f banco-pv.yaml"
+                    sh "microk8s kubectl apply -f deploy-banco.yaml"
+                    sh "microk8s kubectl apply -f deploy-svc-banco.yaml"
+                    sh "microk8s kubectl apply -f deploy.yaml"
+                    sh "microk8s kubectl apply -f deploy-svc.yaml"
                 }
             }
         }
@@ -64,3 +84,4 @@ pipeline {
         }
     }
 }
+
