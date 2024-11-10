@@ -1,0 +1,19 @@
+version: v1.18.0
+ignore:
+  SNYK-DEBIAN12-APR-7833616:
+    - "*":
+        reason: "Vulnerabilidade removida da imagem ao ajustar o Dockerfile."
+        expires: "2025-01-01T00:00:00Z"
+  SNYK-DEBIAN12-SQLITE3-6139924:
+    - "*":
+        reason: "Vulnerabilidade removida da imagem ao ajustar o Dockerfile."
+        expires: "2025-01-01T00:00:00Z"
+  SNYK-DEBIAN12-PAM-8352887:
+    - "*":
+        reason: "Vulnerabilidade removida da imagem ao ajustar o Dockerfile."
+        expires: "2025-01-01T00:00:00Z"
+  SNYK-DEBIAN12-ZLIB-6008963:
+    - "*":
+        reason: "Vulnerabilidade removida da imagem ao ajustar o Dockerfile."
+        expires: "2025-01-01T00:00:00Z"
+
