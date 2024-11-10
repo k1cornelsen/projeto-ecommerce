@@ -62,14 +62,28 @@ pipeline {
             }
         }
 
+        stage('Snyk Security Scan - Project Directory') {
+            steps {
+                script {
+                    // Executa o escaneamento de segurança do Snyk no diretório do projeto
+                    sh 'snyk test projeto-ecommerce --severity-threshold=medium'
+                }
+            }
+        }
+
         stage('Deploy to Kubernetes') {
             steps {
-                dir(K8S_DIR) {
-                    sh "microk8s kubectl apply -f banco-pv.yaml"
-                    sh "microk8s kubectl apply -f deploy-banco.yaml"
-                    sh "microk8s kubectl apply -f deploy-svc-banco.yaml"
-                    sh "microk8s kubectl apply -f deploy.yaml"
-                    sh "microk8s kubectl apply -f deploy-svc.yaml"
+                withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')]) {
+                    sh """
+                        microk8s kubectl apply -f ${K8S_DIR}/create-base-configmap.yaml
+                        microk8s kubectl apply -f ${K8S_DIR}/database-pv.yaml
+                        microk8s kubectl apply -f ${K8S_DIR}/database-service.yaml
+                        microk8s kubectl apply -f ${K8S_DIR}/database-statefulset.yaml
+                        microk8s kubectl apply -f ${K8S_DIR}/backend-deployment.yaml
+                        microk8s kubectl apply -f ${K8S_DIR}/backend-service.yaml
+                        microk8s kubectl apply -f ${K8S_DIR}/frontend-deployment.yaml
+                        microk8s kubectl apply -f ${K8S_DIR}/frontend-service.yaml
+                    """
                 }
             }
         }
