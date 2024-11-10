@@ -1,5 +1,6 @@
 <?php
 
-$con = mysqli_connect("192.168.132.128:3306", "toor", "senhasecure123#", "projetosemestral");
+
+$con = mysqli_connect($_ENV["DB_HOST"].":3306", "toor", "senhasecure1234#", "projetosemestral");
 
 ?>
