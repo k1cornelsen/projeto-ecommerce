@@ -4,7 +4,7 @@ pipeline {
     environment {
         DOCKER_REPO = 'k1cornelsen/projeto-ecommerce'
         DOCKER_IMAGE_APP = "${DOCKER_REPO}:latest"
-        DOCKER_IMAGE_DB = "${DOCKER_REPO}-db:latest"
+        DOCKER_IMAGE_DB = "k1cornelsen/projeto-ecommerce-db:latest"
         K8S_DIR = 'k8s/'
         SQL_DIR = 'sql/'
         SNYK_TOKEN = credentials('SNYK_AUTH')
