@@ -66,7 +66,7 @@ pipeline {
             steps {
                 script {
                     // Executa o escaneamento de segurança do Snyk no diretório do projeto
-                    sh 'snyk test projeto-ecommerce --severity-threshold=medium'
+                    sh 'snyk code test . --severity-treshold=medium'
                 }
             }
         }
