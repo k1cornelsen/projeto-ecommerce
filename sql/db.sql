@@ -27,3 +27,6 @@ values ('Bermuda Cyclone', 'BERMUDA AZUL PRA COMBINAR COM O KENNER', 379),
 ('Chinelo Kenner', 'DE KENNER', 150),
 ('Corrente de Ouro', 'CORRENTE DE OURO 24K 70CM', 2990),
 ('Óculos Juliet', 'UM ITEM DE CRIA QUE NÃO PODE FALTAR', 125);
+
+GRANT ALL PRIVILEGES ON projetosemestral.* TO 'toor'@'%' IDENTIFIED BY 'senhasecure1234#';
+FLUSH PRIVILEGES;
