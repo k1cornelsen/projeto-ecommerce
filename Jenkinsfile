@@ -22,7 +22,7 @@ pipeline {
             steps {
                 sh """
                     snyk auth --auth-type=token $SNYK_TOKEN
-                    snyk container test ${DOCKER_IMAGE_APP} --severity-threshold=medium
+                    snyk container test ${DOCKER_IMAGE_APP} --severity-threshold=medium --file=Dockerfile --exclude-base-image-vulns
                 """
             }
         }

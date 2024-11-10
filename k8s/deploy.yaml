@@ -7,19 +7,13 @@ spec:
   selector:
     matchLabels:
       app: meu-deploy
-  revisionHistoryLimit: 5
-  progressDeadlineSeconds: 300
-  minReadySeconds: 10
-  strategy:
-    type: RollingUpdate
-    rollingUpdate:
-      maxUnavailable: 1
-      maxSurge: 1
   template:
     metadata:
       labels:
         app: meu-deploy
     spec:
+      securityContext:
+        fsGroup: 33  # ID de grupo comum para www-data no Debian e derivados
       containers:
         - name: meu-deploy
           image: k1cornelsenp/projeto-ecommerce:latest
@@ -29,4 +23,12 @@ spec:
           ports:
             - containerPort: 80
               name: http
+          volumeMounts:
+            - name: app-content
+              mountPath: /var/www/html  # Monta o conteúdo diretamente em /var/www/html para servir corretamente
+      volumes:
+        - name: app-content
+          hostPath:
+            path: /var/www/html/projeto-ecommerce  # Altere este caminho para o local do código-fonte no host
+            type: Directory
 
