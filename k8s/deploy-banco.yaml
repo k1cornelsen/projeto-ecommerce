@@ -4,37 +4,39 @@ metadata:
   name: database
 spec:
   serviceName: "database-service"
-  replicas: 1  # Mantendo apenas 1 réplica
+  replicas: 1
   selector:
     matchLabels:
       app: database
   template:
     metadata:
       labels:
-        app: database
+        app: database  # Certifique-se de que este label corresponde ao seletor do Serviço
     spec:
       containers:
-      - name: database
-        image: mysql:5.7
-        ports:
-        - containerPort: 3306
-        env:
-        - name: MYSQL_ROOT_PASSWORD
-          value: "senhasecure123#"
-        - name: MYSQL_DATABASE
-          value: "projetosemestral"
-        - name: MYSQL_USER
-          value: "toor"
-        - name: MYSQL_PASSWORD
-          value: "senhasecure1234#"
-        volumeMounts:
-        - name: database-storage
-          mountPath: /var/lib/mysql
+        - name: database
+          image: k1cornelsenp/projeto-ecommerce-db:latest
+          ports:
+            - containerPort: 3306
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              value: "senhasecure123#"
+            - name: MYSQL_DATABASE
+              value: "projetosemestral"
+            - name: MYSQL_USER
+              value: "toor"
+            - name: MYSQL_PASSWORD
+              value: "senhasecure1234#"
+          volumeMounts:
+            - name: database-storage
+              mountPath: /var/lib/mysql
   volumeClaimTemplates:
-  - metadata:
-      name: database-storage
-    spec:
-      accessModes: [ "ReadWriteOnce" ]
-      resources:
-        requests:
-          storage: 1Gi  # Tamanho reduzido para 1GB
+    - metadata:
+        name: database-storage
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 2Gi
+

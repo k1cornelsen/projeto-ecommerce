@@ -1,6 +1,8 @@
 <?php
+$con = mysqli_connect("database-service", "toor", "senhasecure1234#", "projetosemestral");
 
-
-$con = mysqli_connect($_ENV["DB_HOST"].":3306", "toor", "senhasecure1234#", "projetosemestral");
-
+if (!$con) {
+    die("Connection failed: " . mysqli_connect_error());
+}
 ?>
+

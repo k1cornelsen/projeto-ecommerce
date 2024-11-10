@@ -22,10 +22,11 @@ spec:
     spec:
       containers:
         - name: meu-deploy
+          image: k1cornelsenp/projeto-ecommerce:latest
           env:
-          - name: DB_HOST
-            value: database
-          image: k1cornelsenp/projeto-ecommerce
-          ports:  
+            - name: DB_HOST
+              value: "database-service"
+          ports:
             - containerPort: 80
               name: http
+

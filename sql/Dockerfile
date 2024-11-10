@@ -1,3 +1,3 @@
-FROM mysql:latest
+FROM bitnami/mysql:8.0
 
-COPY ./db.sql /docker-entrypoint-initdb.d/
+COPY db.sql /docker-entrypoint-initdb.d/

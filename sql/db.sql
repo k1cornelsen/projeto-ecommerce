@@ -1,20 +1,20 @@
-create database projetosemestral;
+create database if not exists projetosemestral;
 use projetosemestral;
 
-create table usuario(
+create table if not exists usuario(
 email varchar(200),
 nome varchar(200),
 cpf bigint,
 senha varchar(200),
 primary key (email));
 
-create table produto(
+create table if not exists produto(
 nome varchar(200),
 descricao varchar(1000), 
 valor int,
 primary key (nome));
 
-create table carrinho(
+create table if not exists carrinho(
 nome varchar(200),
 descricao varchar(1000),
 valor int,
