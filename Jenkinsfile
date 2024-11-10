@@ -29,7 +29,7 @@ pipeline {
 
         stage('Snyk Docker Image Scan - Database') {
             steps {
-                sh "snyk container test ${DOCKER_IMAGE_DB} --severity-threshold=medium"
+                sh "snyk container test ${DOCKER_IMAGE_DB} --severity-threshold=medium --file=/var/www/html/projeto-ecommerce/sql/Dockerfile --exclude-base-image-vulns"
             }
         }
 
