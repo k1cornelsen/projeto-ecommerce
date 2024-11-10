@@ -3,8 +3,8 @@ pipeline {
 
     environment {
         DOCKER_REPO = 'k1cornelsenp/projeto-ecommerce'
-        DOCKER_IMAGE_APP = "\${DOCKER_REPO}:latest"
-        DOCKER_IMAGE_DB = "\${DOCKER_REPO}-db:latest"
+        DOCKER_IMAGE_APP = "${DOCKER_REPO}:latest"
+        DOCKER_IMAGE_DB = "${DOCKER_REPO}-db:latest"
         K8S_DIR = 'k8s/'
         SQL_DIR = 'sql/'
         SNYK_TOKEN = credentials('SNYK_AUTH')
@@ -21,22 +21,22 @@ pipeline {
         stage('Snyk Docker Image Scan - App') {
             steps {
                 sh """
-                    snyk auth --auth-type=token \$SNYK_TOKEN
-                    snyk container test \${DOCKER_IMAGE_APP} --severity-threshold=medium --file=Dockerfile --exclude-base-image-vulns
+                    snyk auth --auth-type=token $SNYK_TOKEN
+                    snyk container test ${DOCKER_IMAGE_APP} --severity-threshold=medium --file=Dockerfile --exclude-base-image-vulns
                 """
             }
         }
 
         stage('Snyk Docker Image Scan - Database') {
             steps {
-                sh "snyk container test \${DOCKER_IMAGE_DB} --severity-threshold=medium --file=\${SQL_DIR}Dockerfile --exclude-base-image-vulns"
+                sh "snyk container test ${DOCKER_IMAGE_DB} --severity-threshold=medium --file=/var/www/html/projeto-ecommerce/sql/Dockerfile --exclude-base-image-vulns"
             }
         }
 
         stage('Build Docker Image - Database') {
             steps {
                 dir(SQL_DIR) {
-                    sh "docker build --no-cache -t \${DOCKER_IMAGE_DB} ."
+                    sh "docker build --no-cache -t ${DOCKER_IMAGE_DB} ."
                 }
             }
         }
@@ -46,7 +46,7 @@ pipeline {
                 withCredentials([usernamePassword(credentialsId: 'DOCKER_HUB', usernameVariable: 'DOCKER_HUB_USR', passwordVariable: 'DOCKER_HUB_PSW')]) {
                     sh """
                         echo \$DOCKER_HUB_PSW | docker login -u \$DOCKER_HUB_USR --password-stdin
-                        docker push \${DOCKER_IMAGE_DB}
+                        docker push ${DOCKER_IMAGE_DB}
                     """
                 }
             }
@@ -54,7 +54,7 @@ pipeline {
 
         stage('Build Docker Image - App') {
             steps {
-                sh "docker build --no-cache -t \${DOCKER_IMAGE_APP} -f Dockerfile ."
+                sh "docker build --no-cache -t ${DOCKER_IMAGE_APP} -f Dockerfile ."
             }
         }
 
@@ -63,7 +63,7 @@ pipeline {
                 withCredentials([usernamePassword(credentialsId: 'DOCKER_HUB', usernameVariable: 'DOCKER_HUB_USR', passwordVariable: 'DOCKER_HUB_PSW')]) {
                     sh """
                         echo \$DOCKER_HUB_PSW | docker login -u \$DOCKER_HUB_USR --password-stdin
-                        docker push \${DOCKER_IMAGE_APP}
+                        docker push ${DOCKER_IMAGE_APP}
                     """
                 }
             }
@@ -71,11 +71,7 @@ pipeline {
 
         stage('Snyk Security Scan - Project Directory') {
             steps {
-                sh '''
-                    chmod -R 755 /var/www/html/projeto-ecommerce/js
-                    export SNYK_CACHE_PATH=/tmp/snyk_cache
-                    snyk code test /var/www/html/projeto-ecommerce/js --severity-threshold=medium 
-                '''
+                sh 'snyk code test /var/www/html/projeto-ecommerce/js --severity-threshold=medium'
             }
         }
 
@@ -83,12 +79,12 @@ pipeline {
             steps {
                 withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')]) {
                     sh """
-                        microk8s kubectl apply -f \${K8S_DIR}/banco-pv.yaml
-                        microk8s kubectl apply -f \${K8S_DIR}/create-db.yaml
-                        microk8s kubectl apply -f \${K8S_DIR}/deploy-banco.yaml
-                        microk8s kubectl apply -f \${K8S_DIR}/deploy-svc-banco.yaml
-                        microk8s kubectl apply -f \${K8S_DIR}/deploy.yaml
-                        microk8s kubectl apply -f \${K8S_DIR}/deploy-svc.yaml
+                        microk8s kubectl apply -f ${K8S_DIR}/banco-pv.yaml
+                        microk8s kubectl apply -f ${K8S_DIR}/create-db.yaml
+                        microk8s kubectl apply -f ${K8S_DIR}/deploy-banco.yaml
+                        microk8s kubectl apply -f ${K8S_DIR}/deploy-svc-banco.yaml
+                        microk8s kubectl apply -f ${K8S_DIR}/deploy.yaml
+                        microk8s kubectl apply -f ${K8S_DIR}/deploy-svc.yaml
                     """
                 }
             }
