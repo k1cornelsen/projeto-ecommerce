@@ -72,7 +72,7 @@ pipeline {
         }
         stage('Deploy to Kubernetes') {
             steps {
-                withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')]) {
+                withCredentials([file(credentialsId: 'KUBE_CONFIG', variable: 'KUBECONFIG')]) {
                     sh '''
                         microk8s kubectl apply -f ${K8S_DIR}/banco-pv.yaml
                         microk8s kubectl apply -f ${K8S_DIR}/create-db.yaml
