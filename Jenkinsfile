@@ -74,7 +74,6 @@ pipeline {
         stage('Snyk Security Scan - Project Directory') {
             steps {
                 sh '''
-                    chmod -R 755 /var/www/html/projeto-ecommerce/js
                     snyk code test /var/www/html/projeto-ecommerce/js --severity-threshold=medium
                 '''
             }
