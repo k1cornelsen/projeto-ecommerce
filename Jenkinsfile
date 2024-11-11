@@ -2,9 +2,9 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_REPO = 'k1cornelsen/projeto-ecommerce'
+        DOCKER_REPO = 'k1cornelsenp/projeto-ecommerce'
         DOCKER_IMAGE_APP = "${DOCKER_REPO}:latest"
-        DOCKER_IMAGE_DB = "k1cornelsen/projeto-ecommerce-db:latest"
+        DOCKER_IMAGE_DB = "k1cornelsenp/projeto-ecommerce-db:latest"
         K8S_DIR = 'k8s/'
         SQL_DIR = 'sql/'
         SNYK_TOKEN = credentials('SNYK_AUTH')
