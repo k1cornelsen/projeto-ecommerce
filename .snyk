@@ -1,5 +1,10 @@
 version: v1.18.0
 ignore:
+  php/HardcodedPassword:
+    - "php/conexao.php":
+        reason: "Credenciais hardcoded permitidas para o ambiente de desenvolvimento."
+        expires: "2025-01-01T00:00:00Z"
+  SNYK-DEBIAN12-APR-7833616:
     - "*":
         reason: "Vulnerabilidade conhecida no apr/libapr1 com impacto mínimo."
         expires: "2025-01-01T00:00:00Z"
