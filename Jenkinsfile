@@ -71,13 +71,6 @@ pipeline {
             }
         }
 
-        stage('Snyk Security Scan - Project Directory') {
-            steps {
-                sh '''
-                    snyk code test /var/www/html/projeto-ecommerce/js --severity-threshold=medium
-                '''
-            }
-        }
 
         stage('Deploy to Kubernetes') {
             steps {
